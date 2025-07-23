@@ -5,7 +5,9 @@ Automatically splits a title into two visually balanced lines by inserting a <br
 Add an element with the selector (class="balanced-title") to your HTML.
 
 Example:
+```
 <h1 class="balanced-title">This is a great title</h1>
+```
 
 ## Notes
 * This script modifies the innerHTML of the target element.
