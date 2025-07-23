@@ -11,7 +11,7 @@
  * Note:
  * - This script modifies the innerHTML of the target element.
  * - Best used when loaded at the end of the <body>.
- */
+*/
 
 function balanceTitle(selector) {
     const el = document.querySelector(selector);
