@@ -9,41 +9,41 @@
  * <h1 class="balanced-title">This is a great title</h1>
  * 
  * Note:
- * - This script modifies the innerHTML of the target element.
  * - Best used when loaded at the end of the <body>.
 */
 
 function balanceTitle(selector) {
-    const el = document.querySelector(selector);
-    if (!el) return;
+  const el = document.querySelector(selector);
+  if (!el) return;
 
-    const words = el.textContent.trim().split(" ");
-    if (words.length < 2) return; // nothing to split
+  // Split the text into words
+  const words = el.textContent.trim().split(" ");
+  if (words.length < 2) return;
 
-    // Try all possible splits and choose the one with the smallest difference in length
-    let bestSplit = 1;
-    let smallestDiff = Infinity;
+  // Find the split point with the most balanced character count
+  let bestSplit = 1;
+  let smallestDiff = Infinity;
 
-    for (let i = 1; i < words.length; i++) {
-        const firstPart = words.slice(0, i).join(" ");
-        const secondPart = words.slice(i).join(" ");
-        const diff = Math.abs(firstPart.length - secondPart.length);
+  for (let i = 1; i < words.length; i++) {
+    const firstPart = words.slice(0, i).join(" ");
+    const secondPart = words.slice(i).join(" ");
+    const diff = Math.abs(firstPart.length - secondPart.length);
 
-        if (diff < smallestDiff) {
-            smallestDiff = diff;
-            bestSplit = i;
-        }
+    if (diff < smallestDiff) {
+      smallestDiff = diff;
+      bestSplit = i;
     }
+  }
 
-    // Build the new content using <br>
-    const balancedHTML = `
-      ${words.slice(0, bestSplit).join(" ")}<br>
-      ${words.slice(bestSplit).join(" ")}
-    `;
-    el.innerHTML = balancedHTML;
+  // Create DOM elements
+  const firstText = document.createTextNode(words.slice(0, bestSplit).join(" "));
+  const br = document.createElement("br");
+  const secondText = document.createTextNode(words.slice(bestSplit).join(" "));
+
+  // Clear and replace the element's content
+  el.replaceChildren(firstText, br, secondText);
 }
 
-// Execute after the page has loaded.
 document.addEventListener("DOMContentLoaded", () => {
-    balanceTitle(".balanced-title");
+  balanceTitle(".balanced-title");
 });
