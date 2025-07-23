@@ -11,4 +11,4 @@ Example:
 
 ## Notes
 * This script modifies the innerHTML of the target element.
-* Best used when loaded at the end of the <body>, or after DOMContentLoaded.
+* Best used when loaded at the end of the `<body>`.
