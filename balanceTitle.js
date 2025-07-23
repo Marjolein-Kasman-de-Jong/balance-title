@@ -18,7 +18,7 @@ function balanceTitle(selector) {
     if (!el) return;
 
     const words = el.textContent.trim().split(" ");
-    if (words.length < 2) return; // niks te verdelen
+    if (words.length < 2) return; // nothing to split
 
     // Try all possible splits and choose the one with the smallest difference in length
     let bestSplit = 1;
