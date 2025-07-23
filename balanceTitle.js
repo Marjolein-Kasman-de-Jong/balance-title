@@ -4,6 +4,7 @@
  *
  * Usage:
  * - Add an element with the selector (class="balanced-title") to your HTML.
+ * - Set the minimum viewport width (in pixels) required to apply the balancing in line 16 (0 = apply always).
  * 
  * Example:
  * <h1 class="balanced-title">This is a great title</h1>
@@ -12,38 +13,56 @@
  * - Best used when loaded at the end of the <body>.
 */
 
-function balanceTitle(selector) {
-  const el = document.querySelector(selector);
-  if (!el) return;
+const minWidth = 768; // minimum viewport width (in pixels) required to apply the balancing (0 = apply always)
 
-  // Split the text into words
-  const words = el.textContent.trim().split(" ");
-  if (words.length < 2) return;
+function balanceTitle(selector, minWidth = 0) {
+  const elements = document.querySelectorAll(selector);
 
-  // Find the split point with the most balanced character count
-  let bestSplit = 1;
-  let smallestDiff = Infinity;
+  elements.forEach((el) => {
+    const originalText = el.dataset.originalText || el.textContent.trim();
 
-  for (let i = 1; i < words.length; i++) {
-    const firstPart = words.slice(0, i).join(" ");
-    const secondPart = words.slice(i).join(" ");
-    const diff = Math.abs(firstPart.length - secondPart.length);
+    // Always store the original text so we can reset if needed
+    el.dataset.originalText = originalText;
 
-    if (diff < smallestDiff) {
-      smallestDiff = diff;
-      bestSplit = i;
+    if (window.innerWidth < minWidth) {
+      // Reset to single-line version if below breakpoint
+      el.textContent = originalText;
+      return;
     }
-  }
 
-  // Create DOM elements
-  const firstText = document.createTextNode(words.slice(0, bestSplit).join(" "));
-  const br = document.createElement("br");
-  const secondText = document.createTextNode(words.slice(bestSplit).join(" "));
+    const words = originalText.split(" ");
+    if (words.length < 2) return;
 
-  // Clear and replace the element's content
-  el.replaceChildren(firstText, br, secondText);
+    let bestSplit = 1;
+    let smallestDiff = Infinity;
+
+    for (let i = 1; i < words.length; i++) {
+      const firstPart = words.slice(0, i).join(" ");
+      const secondPart = words.slice(i).join(" ");
+      const diff = Math.abs(firstPart.length - secondPart.length);
+
+      if (diff < smallestDiff) {
+        smallestDiff = diff;
+        bestSplit = i;
+      }
+    }
+
+    const firstText = document.createTextNode(words.slice(0, bestSplit).join(" "));
+    const br = document.createElement("br");
+    const secondText = document.createTextNode(words.slice(bestSplit).join(" "));
+
+    el.replaceChildren(firstText, br, secondText);
+  });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  balanceTitle(".balanced-title");
-});
+// Setup: run on load and on resize
+function setupTitleBalancer(selector, minWidth = 0) {
+  function apply() {
+    balanceTitle(selector, minWidth);
+  }
+
+  window.addEventListener("resize", apply);
+  document.addEventListener("DOMContentLoaded", apply);
+}
+
+setupTitleBalancer(".balanced-title", minWidth);
